@@ -8,7 +8,7 @@ import com.stas.demo.model.Item;
 public interface ItemInterface extends JpaRepository<Item,Integer>
 {
 	/**
-	 * Method for depositing quantity to specific item 
+	 * Method for depositing quantity to a specific item 
 	 * @param amount
 	 * @param itemNo
 	 */

@@ -3,51 +3,57 @@ package com.stas.demo.controller;
 import org.springframework.stereotype.Controller;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.lang.annotation.Documented;
 import java.util.List;
 
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
+import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.servlet.ModelAndView;
 
 import com.stas.demo.dao.ItemInterface;
 import com.stas.demo.model.Item;
 
-@Controller
+@RestController
+@RequestMapping("/")
 public class ItemController
 {
-	@Autowired
+	@Autowired	
 	ItemInterface itemInterface;
-
+	ModelAndView mvHome = new ModelAndView("home.jsp");
 	/**
 	 * home page
-	 * @return "home.jsp"
+	 * @return mvHome
 	 */
-	@RequestMapping("/")
-	public String home()
+	@GetMapping("")
+	public ModelAndView home()
 	{
-		return "home.jsp";
+		return mvHome;
 	}
 	
 	/**
 	 * Method to add items 
 	 * @param item
-	 * @return "home.jsp"
+	 * @return mvHome
 	 */
-	@RequestMapping("/addItem")
-	public String addItem(Item item)
+	
+	@GetMapping("/addItem")
+	public ModelAndView addItem(Item item)
 	{
 		itemInterface.save(item);
-		return "home.jsp";
+		return mvHome;
 	}
 	
 	/**
 	 * Method to get all items in stock
-	 * @return all items, JSON format
+	 * @return Item list
 	 */
-	@RequestMapping("/getAllItems")
-	@ResponseBody
+	@GetMapping("/getAllItems")
 	public List<Item> getAllItems()
 	{
 		return itemInterface.findAll();
@@ -56,40 +62,38 @@ public class ItemController
 	/**
 	 * Method to get item in stock with given index
 	 * @param itemNo
-	 * @return item, JSON format
 	 */
-	@RequestMapping("/getItem")
-	@ResponseBody
+	@GetMapping("/getItem")
 	public Item getItem(@RequestParam int itemNo)
 	{
 		
-		return itemInterface.findById(itemNo).orElse(new Item()); 
+	    return itemInterface.findById(itemNo).orElse(new Item()); 
 	}
 	
 	/**
 	 * Method for deleting an item with given index
 	 * @param itemNo
-	 * @return "home.jsp"
+	 * @return mvHome
 	 */
-	@RequestMapping("/deleteItem")
-	public String deleteItem(@RequestParam int itemNo)
+	@GetMapping("/deleteItem")
+	public ModelAndView deleteItem(@RequestParam int itemNo)
 	{
 		itemInterface.deleteById(itemNo);
-		return "home.jsp";
+		return mvHome;
 	}
 	
 	/**
 	 * Method for depositing quantity to specific item 
 	 * @param amount
 	 * @param itemNo
-	 * @return "home.jsp"
+	 * @return mvHome
 	 */
 	@Transactional
-	@RequestMapping("/depositItem")
-	public String depositItem(@RequestParam int amount, int itemNo)
+	@GetMapping("/depositItem")
+	public ModelAndView depositItem(@RequestParam int amount, int itemNo)
 	{
 		itemInterface.depositItem(amount, itemNo);
-		return "home.jsp";
+		return mvHome;
 	}
 	
 	/**
@@ -97,8 +101,7 @@ public class ItemController
 	 * @param itemNo
 	 * @return amount
 	 */
-	@RequestMapping("/getItemQuantity")
-	@ResponseBody
+	@GetMapping("/getItemQuantity")
 	public String getItemQuantity(@RequestParam int itemNo)
 	{	
 		return itemInterface.getItemQuantity(itemNo);
